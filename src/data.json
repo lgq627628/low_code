@@ -1,0 +1,15 @@
+{
+    "container": {
+        "width": 900,
+        "height": 400
+    },
+    "blocks": [{
+        "top": 100,
+        "left": 100,
+        "key": "ElButton"
+    }, {
+        "top": 200,
+        "left": 200,
+        "key": "ElInput"
+    }]
+}
