@@ -33,8 +33,10 @@ export function useFocus(editorData, beforeMoveCb) {
     if (e.shiftKey) {
       block.focus = !block.focus;
     } else {
-      clearAllFocusBlock();
-      block.focus = true;
+      if (!block.focus) {
+        clearAllFocusBlock()
+        block.focus = true
+      }
     }
     beforeMoveCb(e) // 按下鼠标即刻开始准备移动，也就是开始监听 document
   };
