@@ -11,5 +11,9 @@
         "top": 200,
         "left": 200,
         "key": "ElInput"
+    }, {
+        "top": 300,
+        "left": 300,
+        "key": "ElTag"
     }]
 }

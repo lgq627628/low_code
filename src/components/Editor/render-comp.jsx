@@ -15,7 +15,7 @@ export default defineComponent({
 
         const renderCompRef = ref(null)
         onMounted(() => {
-            if (block.needCenterAfterDrag) { // 最好通过派发事件的方式修改 props
+            if (block.needCenterAfterDrag) { // 拖拽之后让元素居中，最好通过派发事件的方式修改 props
                 const { offsetWidth, offsetHeight } = renderCompRef.value;
                 block.left = block.left - offsetWidth / 2
                 block.top = block.top - offsetHeight / 2

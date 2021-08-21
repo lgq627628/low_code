@@ -1,7 +1,10 @@
-import { computed, defineComponent, onMounted, reactive, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import RenderComp from './render-comp.jsx'
-import PreviewComp from './preview-comp'
+import PreviewComp from './preview-comp.jsx'
 import registerConfig from './register.jsx'
+import { useDrag } from './useDrag.js'
+import { useFocus } from './useFocus.js'
+import { useMove } from './useMove.js'
 import './Editor.scss'
 
 export default defineComponent({
@@ -19,55 +22,33 @@ export default defineComponent({
       height: editorData.value.container.height + 'px'
     }))
 
-
     let blockRef = ref(null)
 
-    let curComp = null
-    const ondragstart = (e, comp) => {
-      curComp = comp
-      // e.dataTransfer.setData('curComp', JSON.stringify(comp)) 为什么不用这样存呢，因为 setData 里面放的是字符串，而我们有函数会被忽略掉
-      mainRef.value.addEventListener('dragenter', ondragenter)
-      mainRef.value.addEventListener('dragleave', ondragleave)
-      mainRef.value.addEventListener('dragover', ondragover)
-      mainRef.value.addEventListener('drop', ondrop)
-    }
-    const ondrop = e => {
-      e.preventDefault()
-      const { offsetX, offsetY } = e
-      const block = {
-        top: offsetY,
-        left: offsetX,
-        key: curComp.key,
-        needCenterAfterDrag: true
-      }
-      editorData.value.blocks.push(block)
-      curComp = null
-    };
-    const ondragenter = e => {
-      e.dataTransfer.dropEffect = 'move'
-    };
-    const ondragover = e => {
-      e.preventDefault()
-    }
-    const ondragleave = e => {
-      e.dataTransfer.dropEffect = 'none'
-    }
+    // 左侧物料拖拽功能
+    const { ondragstart, ondragend } = useDrag(mainRef, editorData)
+
+    // 选中渲染元素
+    const { onMainMousedown, onBlockMousedown, focusData } = useFocus(editorData, e => {
+      const { onDocumentMousedown } = useMove(focusData)
+      onDocumentMousedown(e)
+    })
+    
     return () => (
       <div class="editor">
         <div class="editor__left">
           {
             registerConfig.componentList.map(comp => {
-              return <PreviewComp comp={comp} draggable ondragstart={e => ondragstart(e, comp)}></PreviewComp>
+              return <PreviewComp comp={comp} draggable ondragstart={e => ondragstart(e, comp)} ondragend={ondragend}></PreviewComp>
             })
           }
         </div>
         <div class="editor__mid">
           <div class="editor__top">上</div>
           <div class="editor__wrap">
-            <div class="editor__main" ref={mainRef} style={mainStyle.value}>
+            <div class="editor__main" ref={mainRef} style={mainStyle.value} onMousedown={onMainMousedown}>
               {
                 editorData.value.blocks.map(block => {
-                  return <RenderComp block={block} ref={blockRef}></RenderComp>
+                  return <RenderComp block={block} ref={blockRef} class={block.focus ? 'render-comp--focus' : ''} onMousedown={e => onBlockMousedown(e, block)}></RenderComp>
                 })
               }
             </div>
