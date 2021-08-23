@@ -15,12 +15,14 @@ export default defineComponent({
 
         const renderCompRef = ref(null)
         onMounted(() => {
+            const { offsetWidth, offsetHeight } = renderCompRef.value;
             if (block.needCenterAfterDrag) { // 拖拽之后让元素居中，最好通过派发事件的方式修改 props
-                const { offsetWidth, offsetHeight } = renderCompRef.value;
                 block.left = block.left - offsetWidth / 2
                 block.top = block.top - offsetHeight / 2
                 block.needCenterAfterDrag = false
             }
+            block.width = offsetWidth // 方便后面计算辅助线用
+            block.height = offsetHeight
         })
         return () => <div class="render-comp" ref={renderCompRef} style={style.value}>
             <RenderComp></RenderComp>

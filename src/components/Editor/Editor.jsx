@@ -28,10 +28,10 @@ export default defineComponent({
     const { ondragstart, ondragend } = useDrag(mainRef, editorData)
 
     // 选中渲染元素
-    const { onMainMousedown, onBlockMousedown, focusData } = useFocus(editorData, e => {
-      const { onDocumentMousedown } = useMove(focusData)
+    const { onMainMousedown, onBlockMousedown, focusData, lastFocusBlock } = useFocus(editorData, e => {
       onDocumentMousedown(e)
     })
+    const { onDocumentMousedown, helpLine } = useMove(focusData, lastFocusBlock, editorData)
     
     return () => (
       <div class="editor">
@@ -47,10 +47,12 @@ export default defineComponent({
           <div class="editor__wrap">
             <div class="editor__main" ref={mainRef} style={mainStyle.value} onMousedown={onMainMousedown}>
               {
-                editorData.value.blocks.map(block => {
-                  return <RenderComp block={block} ref={blockRef} class={block.focus ? 'render-comp--focus' : ''} onMousedown={e => onBlockMousedown(e, block)}></RenderComp>
+                editorData.value.blocks.map((block, i) => {
+                  return <RenderComp block={block} ref={blockRef} class={block.focus ? 'render-comp--focus' : ''} onMousedown={e => onBlockMousedown(e, block, i)}></RenderComp>
                 })
               }
+              { helpLine.x && <div class="help-line-x" style={ { top: helpLine.x + 'px' } }></div> }
+              { helpLine.y && <div class="help-line-y" style={ { left: helpLine.y + 'px' } }></div> }
             </div>
           </div>
         </div>

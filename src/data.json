@@ -10,10 +10,10 @@
     }, {
         "top": 200,
         "left": 200,
-        "key": "ElInput"
+        "key": "ElTag"
     }, {
         "top": 300,
         "left": 300,
-        "key": "ElTag"
+        "key": "ElInput"
     }]
 }

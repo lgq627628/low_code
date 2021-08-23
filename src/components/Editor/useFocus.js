@@ -1,5 +1,5 @@
 
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 /**
  * @description: 选中渲染元素
  * @param {*} editorData 所有渲染的数据
@@ -7,6 +7,8 @@ import { computed } from 'vue'
  * @return {*}
  */
 export function useFocus(editorData, beforeMoveCb) {
+  const lastFocusIdx = ref(-1)
+  const lastFocusBlock = computed(() => editorData.value.blocks[lastFocusIdx.value])
   const clearAllFocusBlock = () => {
     editorData.value.blocks.forEach((block) => {
       block.focus = false;
@@ -27,7 +29,7 @@ export function useFocus(editorData, beforeMoveCb) {
       unfocusBlocks,
     };
   });
-  const onBlockMousedown = (e, block) => {
+  const onBlockMousedown = (e, block, i) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.shiftKey) {
@@ -38,17 +40,24 @@ export function useFocus(editorData, beforeMoveCb) {
         block.focus = true
       }
     }
-    beforeMoveCb(e) // 按下鼠标即刻开始准备移动，也就是开始监听 document
+    if (block.focus) {
+      lastFocusIdx.value = i
+      beforeMoveCb(e) // 按在渲染元素上才即刻开始准备移动，也就是开始监听 document
+    } else {
+      lastFocusIdx.value = -1
+    }
   };
   const onMainMousedown = (e) => {
     clearAllFocusBlock();
+    lastFocusIdx.value = -1
   };
 
   return {
     onMainMousedown,
     onBlockMousedown,
     focusData,
-    clearAllFocusBlock
-
+    clearAllFocusBlock,
+    lastFocusIdx,
+    lastFocusBlock
   }
 };
