@@ -7,7 +7,9 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "deepcopy": "^2.1.0",
     "element-plus": "^1.0.2-beta.71",
+    "mitt": "^3.0.0",
     "vue": "^3.0.5"
   },
   "devDependencies": {

@@ -5,17 +5,28 @@ import registerConfig from './register.jsx'
 import { useDrag } from './useDrag.js'
 import { useFocus } from './useFocus.js'
 import { useMove } from './useMove.js'
+import { useOperate } from './useOperate.js'
 import './Editor.scss'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
   props: {
     modelValue: { type: Object }
   },
+  emits: ['update:modelValue'],
   components: {
     RenderComp
   },
   setup(props, ctx) {
-    const editorData = computed(() => props.modelValue)
+    const editorData = computed({
+      get() {
+        return props.modelValue
+      },
+      set(newVal) {
+        console.log('newVal', newVal)
+        ctx.emit('update:modelValue', deepcopy(newVal))
+      }
+    })
     const mainRef = ref(null)
     const mainStyle = computed(() => ({
       width: editorData.value.container.width + 'px',
@@ -31,8 +42,20 @@ export default defineComponent({
     const { onMainMousedown, onBlockMousedown, focusData, lastFocusBlock } = useFocus(editorData, e => {
       onDocumentMousedown(e)
     })
+
+    // 拖拽渲染元素
     const { onDocumentMousedown, helpLine } = useMove(focusData, lastFocusBlock, editorData)
     
+    const btns = [{
+      label: '撤销',
+      handle: () => commandMap.undo()
+    }, {
+      label: '重做',
+      handle: () => commandMap.redo()
+    }]
+    const { commandMap } = useOperate(editorData)
+
+    window.qqq = editorData
     return () => (
       <div class="editor">
         <div class="editor__left">
@@ -43,7 +66,13 @@ export default defineComponent({
           }
         </div>
         <div class="editor__mid">
-          <div class="editor__top">上</div>
+          <div class="editor__top">
+            {
+              btns.map(btn => {
+                return <ElButton onClick={btn.handle}>{btn.label}</ElButton>
+              })
+            }
+          </div>
           <div class="editor__wrap">
             <div class="editor__main" ref={mainRef} style={mainStyle.value} onMousedown={onMainMousedown}>
               {
@@ -51,8 +80,8 @@ export default defineComponent({
                   return <RenderComp block={block} ref={blockRef} class={block.focus ? 'render-comp--focus' : ''} onMousedown={e => onBlockMousedown(e, block, i)}></RenderComp>
                 })
               }
-              { helpLine.x && <div class="help-line-x" style={ { top: helpLine.x + 'px' } }></div> }
-              { helpLine.y && <div class="help-line-y" style={ { left: helpLine.y + 'px' } }></div> }
+              { helpLine.x ? <div class="help-line-x" style={ { top: helpLine.x + 'px' } }></div> : ''}
+              { helpLine.y ? <div class="help-line-y" style={ { left: helpLine.y + 'px' } }></div> : '' }
             </div>
           </div>
         </div>

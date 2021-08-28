@@ -1,11 +1,12 @@
  import { reactive } from 'vue'
+import events from './events'
  /**
   * @description: 移动渲染元素
   * @param {*} focusData 需要移动的元素
   * @return {*}
   */
-export function useMove(focusData, lastFocusBlock, editorData) {
-  let moveState = null;
+export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时候之所以用 mousedown 事件，是因为可以在移动的时候使用滚轮，这是和 drag 事件的区别
+  let moveState = null
   const helpLine = reactive({
     x: null,
     y: null
@@ -40,6 +41,7 @@ export function useMove(focusData, lastFocusBlock, editorData) {
   const onDocumentMousedown = (e) => {
     // 移动所有选中元素
     moveState = {
+      isMoving: false,
       startX: e.clientX,
       startY: e.clientY,
       startTop: lastFocusBlock.value.top,
@@ -51,6 +53,12 @@ export function useMove(focusData, lastFocusBlock, editorData) {
     document.addEventListener('mouseup', onDocumentMouseup)
   }
   const onDocumentMousemove = (e) => {
+    if (!moveState.isMoving) {
+      moveState.isMoving = true
+      console.log('开始移动')
+      events.emit('dragstart')
+    }
+
     let { clientX, clientY } = e
     const { startX, startY, startTop, startLeft} = moveState
     const offsetTop = startY - startTop // 容器到页面顶部的距离
@@ -92,6 +100,10 @@ export function useMove(focusData, lastFocusBlock, editorData) {
     })
   }
   const onDocumentMouseup = (e) => {
+    if (moveState.isMoving) {
+      console.log('移动结束')
+      events.emit('dragend')
+    }
     document.removeEventListener('mousemove', onDocumentMousemove)
     document.removeEventListener('mouseup', onDocumentMouseup)
     moveState = null

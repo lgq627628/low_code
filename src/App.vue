@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import Editor from './components/Editor/Editor.jsx'
 import data from './data.json'
 export default defineComponent({
@@ -12,7 +12,10 @@ export default defineComponent({
     Editor
   },
   setup() {
-    const editorData = reactive(data)
+    const editorData = ref(data)
+    watch(editorData, () => {
+      console.log(editorData.value.blocks.length, '111')
+    })
     return {
       editorData
     }

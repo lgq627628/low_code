@@ -1,3 +1,5 @@
+import events from "./events"
+
 /**
  * @description: 从左侧物料区拖拽到右侧画布区
  * @param {*} mainRef 右侧画布容器
@@ -14,6 +16,8 @@ export function useDrag(mainRef, editorData) {
         mainRef.value.addEventListener('dragleave', ondragleave)
         mainRef.value.addEventListener('dragover', ondragover)
         mainRef.value.addEventListener('drop', ondrop)
+        console.log('开始拖')
+        events.emit('dragstart')
     }
     const ondragend = e => {
         mainRef.value.removeEventListener('dragenter', ondragenter)
@@ -35,9 +39,16 @@ export function useDrag(mainRef, editorData) {
             key: curComp.key,
             needCenterAfterDrag: true // 拖拽后居中
         }
-        editorData.value.blocks.push(block)
-        // editorData.value.blocks = [...editorData.value.blocks, block]
+        // editorData.value.blocks.push(block)
+        editorData.value.blocks = [...editorData.value.blocks, block]
+        // const blocks = editorData.value.blocks
+        // editorData.value = {
+        //     ...editorData.value,
+        //     blocks: [...blocks, block]
+        // }
         curComp = null
+        console.log('结束拖拽', editorData.value.blocks.length)
+        events.emit('dragend')
     };
     const ondragleave = e => {
         e.dataTransfer.dropEffect = 'none'
