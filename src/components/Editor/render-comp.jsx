@@ -5,24 +5,24 @@ export default defineComponent({
         block: { type: Object }
     },
     setup(props) {
-        const { block } = props
-        const comp = registerConfig.componentMap[block.key]
+        // const { block } = props 因为 props 是响应式的，你不能使用 ES6 解构，因为它会消除 prop 的响应性，好大一个坑
+        const comp = registerConfig.componentMap[props.block.key]
         const RenderComp = comp.render()
         const style = computed(() => ({
-            top: `${block.top}px`,
-            left: `${block.left}px`
+            top: `${props.block.top}px`,
+            left: `${props.block.left}px`
         }))
 
         const renderCompRef = ref(null)
         onMounted(() => {
             const { offsetWidth, offsetHeight } = renderCompRef.value;
-            if (block.needCenterAfterDrag) { // 拖拽之后让元素居中，最好通过派发事件的方式修改 props
-                block.left = block.left - offsetWidth / 2
-                block.top = block.top - offsetHeight / 2
-                block.needCenterAfterDrag = false
+            if (props.block.needCenterAfterDrag) { // 拖拽之后让元素居中，最好通过派发事件的方式修改 props
+                props.block.left = props.block.left - offsetWidth / 2
+                props.block.top = props.block.top - offsetHeight / 2
+                props.block.needCenterAfterDrag = false
             }
-            block.width = offsetWidth // 方便后面计算辅助线用
-            block.height = offsetHeight
+            props.block.width = offsetWidth // 方便后面计算辅助线用
+            props.block.height = offsetHeight
         })
         return () => <div class="render-comp" ref={renderCompRef} style={style.value}>
             <RenderComp></RenderComp>

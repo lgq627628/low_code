@@ -12,6 +12,7 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
     y: null
   })
   const getAllLines = () => { // 移动开始前直接一次性获取所有辅助线
+    const { width: BWidth, height: BHeight } = lastFocusBlock.value
     const unfocusBlocks = focusData.value.unfocusBlocks
     const lines = { x: [], y: [] };
     [...unfocusBlocks, { // 加上这个可以针对整个容器居中
@@ -21,7 +22,6 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
       height: editorData.value.container.height,
     }].forEach(unfocusBlock => {
       const { width: AWidth, height: AHeight, top: ATop, left: ALeft } = unfocusBlock
-      const { width: BWidth, height: BHeight, top: BTop, left: BLeft } = lastFocusBlock.value
       // 当元素拖拽移动到 targetTop 值时，显示辅助线 helpTop 值
       // 先存横线
       lines.x.push({ targetTop: ATop, helpTop: ATop })
@@ -46,7 +46,7 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
       startY: e.clientY,
       startTop: lastFocusBlock.value.top,
       startLeft: lastFocusBlock.value.left,
-      focusBlocks: focusData.value.focusBlocks,
+      startPos: focusData.value.focusBlocks.map(({ top, left }) => ({ top, left })),
       lines: getAllLines()
     }
     document.addEventListener('mousemove', onDocumentMousemove)
@@ -55,7 +55,6 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
   const onDocumentMousemove = (e) => {
     if (!moveState.isMoving) {
       moveState.isMoving = true
-      console.log('开始移动')
       events.emit('dragstart')
     }
 
@@ -89,19 +88,14 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
     }
     const deltaX = clientX - startX
     const deltaY = clientY - startY
-    
-    moveState.startX = clientX;
-    moveState.startY = clientY;
-    moveState.startTop = clientY - offsetTop;
-    moveState.startLeft = clientX - offsetLeft;
-    moveState.focusBlocks.forEach((focusBlock) => {
-      focusBlock.top += deltaY;
-      focusBlock.left += deltaX;
+
+    focusData.value.focusBlocks.forEach((focusBlock, i) => {
+      focusBlock.top = moveState.startPos[i].top + deltaY
+      focusBlock.left = moveState.startPos[i].left + deltaX
     })
   }
   const onDocumentMouseup = (e) => {
     if (moveState.isMoving) {
-      console.log('移动结束')
       events.emit('dragend')
     }
     document.removeEventListener('mousemove', onDocumentMousemove)

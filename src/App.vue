@@ -13,9 +13,6 @@ export default defineComponent({
   },
   setup() {
     const editorData = ref(data)
-    watch(editorData, () => {
-      console.log(editorData.value.blocks.length, '111')
-    })
     return {
       editorData
     }

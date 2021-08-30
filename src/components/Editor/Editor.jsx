@@ -23,10 +23,19 @@ export default defineComponent({
         return props.modelValue
       },
       set(newVal) {
-        console.log('newVal', newVal)
         ctx.emit('update:modelValue', deepcopy(newVal))
       }
     })
+    const editorDataUtils = {
+      updateBlocks: (blocks) => {
+        editorData.value = { ...editorData.value, blocks }
+      },
+      clearAllFocusBlock: () => {
+        editorData.value.blocks.forEach((block) => {
+          block.focus = false;
+        });
+      }
+    }
     const mainRef = ref(null)
     const mainStyle = computed(() => ({
       width: editorData.value.container.width + 'px',
@@ -36,15 +45,15 @@ export default defineComponent({
     let blockRef = ref(null)
 
     // 左侧物料拖拽功能
-    const { ondragstart, ondragend } = useDrag(mainRef, editorData)
+    const { ondragstart, ondragend } = useDrag(mainRef, editorData, editorDataUtils)
 
     // 选中渲染元素
-    const { onMainMousedown, onBlockMousedown, focusData, lastFocusBlock } = useFocus(editorData, e => {
+    const { onMainMousedown, onBlockMousedown, focusData, lastFocusBlock } = useFocus(editorData, editorDataUtils, e => {
       onDocumentMousedown(e)
     })
 
     // 拖拽渲染元素
-    const { onDocumentMousedown, helpLine } = useMove(focusData, lastFocusBlock, editorData)
+    const { onDocumentMousedown, helpLine } = useMove(focusData, lastFocusBlock, editorData, editorDataUtils)
     
     const btns = [{
       label: '撤销',
@@ -52,8 +61,11 @@ export default defineComponent({
     }, {
       label: '重做',
       handle: () => commandMap.redo()
+    }, {
+      label: '删除',
+      handle: () => commandMap.delete()
     }]
-    const { commandMap } = useOperate(editorData)
+    const { commandMap } = useOperate(editorData, editorDataUtils, focusData)
 
     window.qqq = editorData
     return () => (
@@ -77,7 +89,7 @@ export default defineComponent({
             <div class="editor__main" ref={mainRef} style={mainStyle.value} onMousedown={onMainMousedown}>
               {
                 editorData.value.blocks.map((block, i) => {
-                  return <RenderComp block={block} ref={blockRef} class={block.focus ? 'render-comp--focus' : ''} onMousedown={e => onBlockMousedown(e, block, i)}></RenderComp>
+                  return <RenderComp key={block} block={block} ref={blockRef} class={block.focus ? 'render-comp--focus' : ''} onMousedown={e => onBlockMousedown(e, block, i)}></RenderComp>
                 })
               }
               { helpLine.x ? <div class="help-line-x" style={ { top: helpLine.x + 'px' } }></div> : ''}

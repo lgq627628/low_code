@@ -1,19 +1,20 @@
-
 import { computed, ref } from 'vue'
+import events from './events'
 /**
  * @description: 选中渲染元素
  * @param {*} editorData 所有渲染的数据
  * @param {*} afterMoveCb 准备点击移动的回调
  * @return {*}
  */
-export function useFocus(editorData, beforeMoveCb) {
+export function useFocus(editorData, editorDataUtils, beforeMoveCb) {
   const lastFocusIdx = ref(-1)
   const lastFocusBlock = computed(() => editorData.value.blocks[lastFocusIdx.value])
-  const clearAllFocusBlock = () => {
-    editorData.value.blocks.forEach((block) => {
-      block.focus = false;
-    });
-  };
+  window.fff = lastFocusIdx
+  window.dddd = lastFocusBlock
+  const makeLastBlockFoucs = () => { // 拖拽完后高亮当前组件
+    editorDataUtils.clearAllFocusBlock()
+    editorData.value.blocks[editorData.value.blocks.length - 1].focus = true
+  }
   const focusData = computed(() => {
     const focusBlocks = [];
     const unfocusBlocks = [];
@@ -36,7 +37,7 @@ export function useFocus(editorData, beforeMoveCb) {
       block.focus = !block.focus;
     } else {
       if (!block.focus) {
-        clearAllFocusBlock()
+        editorDataUtils.clearAllFocusBlock()
         block.focus = true
       }
     }
@@ -48,16 +49,14 @@ export function useFocus(editorData, beforeMoveCb) {
     }
   };
   const onMainMousedown = (e) => {
-    clearAllFocusBlock();
-    lastFocusIdx.value = -1
+    editorDataUtils.clearAllFocusBlock();
+    lastFocusIdx.value = -1;
   };
-
+  events.on('makeLastBlockFoucs', makeLastBlockFoucs)
   return {
     onMainMousedown,
     onBlockMousedown,
     focusData,
-    clearAllFocusBlock,
-    lastFocusIdx,
     lastFocusBlock
   }
 };

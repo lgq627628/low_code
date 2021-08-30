@@ -1,12 +1,13 @@
 import deepcopy from 'deepcopy'
 import { onUnmounted } from 'vue'
 import events from './events.js'
-export function useOperate(editorData) {
+export function useOperate(editorData, editorDataUtils, focusData) {
     const state = {
         point: -1,
         queue: [],
         commandMap: {},
         commandList: [],
+        keyboard2Command: {},
         destoryList: []
     }
 
@@ -16,15 +17,16 @@ export function useOperate(editorData) {
             destoryItem && state.destoryList.push(destoryItem)
         }
         state.commandList.push(command)
+        state.keyboard2Command[command.keyboard] = command.name
         state.commandMap[command.name] = () => { // 命令对应执行函数
-            const { redo, undo } = command.exec()
+            const { redo, undo } = command.exec() || {}
+            if (!redo) return
             redo()
             if (!command.pushQueue) return
             const { queue, point } = state
             state.queue = queue.slice(0, point + 1) // 撤销过程中再添加的话需要舍弃栈指针后面的元素
             state.queue.push({ redo, undo })
             state.point++
-            console.log(state.queue)
         }
     }
 
@@ -36,9 +38,9 @@ export function useOperate(editorData) {
             return {
                 redo() { // 约定都有这个方法
                     if (!state.queue.length || state.point < 0) return
-                    console.log('撤销')
                     const last = state.queue[state.point]
                     if (last) {
+                        console.log('撤销')
                         last.undo && last.undo()
                         state.point--
                     }
@@ -48,14 +50,14 @@ export function useOperate(editorData) {
     })
     register({
         name: 'redo',
-        keyboard: 'ctrl+y',
+        keyboard: 'ctrl+shift+z',
         exec() {
             return {
                 redo() {
                     if (!state.queue.length || state.point >= state.queue.length - 1) return
-                    console.log('重做')
                     const next = state.queue[state.point + 1]
                     if (next) {
+                        console.log('重做')
                         next.redo && next.redo()
                         state.point++
                     }
@@ -80,20 +82,66 @@ export function useOperate(editorData) {
         },
         exec() {
             const before = this.before
-            const after = editorData.value.blocks
-            console.log('after', after.length)
+            const after = deepcopy(editorData.value.blocks)
             return {
                 redo() {
-                    // editorData.value = { ...editorData.value, blocks: after }
-                    editorData.value.blocks = after
+                    editorDataUtils.updateBlocks(after)
                 },
                 undo() {
-                    // editorData.value = { ...editorData.value, blocks: before }
-                    editorData.value.blocks = before
+                    editorDataUtils.updateBlocks(before)
                 }
             }
         }
     })
+    register({
+        name: 'delete',
+        pushQueue: true,
+        init() {
+
+        },
+        exec() {
+            if (!focusData.value.focusBlocks.length) return // 当前无聚焦元素则操作无效
+            const before = deepcopy(editorData.value.blocks)
+            const after = deepcopy(focusData.value.unfocusBlocks)
+            editorDataUtils.clearAllFocusBlock()
+            return {
+                redo() {
+                    editorDataUtils.updateBlocks(after)
+                },
+                undo() {
+                    editorDataUtils.updateBlocks(before)
+                }
+            }
+        }
+
+    })
+
+    const addKeyboardEvent = () => {
+        const keyMap = {
+            '90': 'z'
+        }
+        const onkeydown = e => {
+            const keys = []
+            if (e.metaKey) keys.push('ctrl')
+            if (e.shiftKey) keys.push('shift')
+            keys.push(keyMap[e.keyCode])
+            const keyString = keys.join('+')
+            const name = state.keyboard2Command[keyString]
+            const fn = state.commandMap[name]
+            if (fn) {
+                e.preventDefault() // 阻止浏览器的默认快捷键，比如 ctrl+s, ctrl+f 
+                fn()
+            }
+        }
+        const init = () => {
+            window.addEventListener('keydown', onkeydown)
+            return () => {
+                window.removeEventListener('keydown', onkeydown)
+            }
+        }
+        return init()
+    }
+    state.destoryList.push(addKeyboardEvent())
     onUnmounted(() => {
         state.destoryList.forEach(fn => fn && fn())
     })
