@@ -9,8 +9,6 @@ import events from './events'
 export function useFocus(editorData, editorDataUtils, beforeMoveCb) {
   const lastFocusIdx = ref(-1)
   const lastFocusBlock = computed(() => editorData.value.blocks[lastFocusIdx.value])
-  window.fff = lastFocusIdx
-  window.dddd = lastFocusBlock
   const makeLastBlockFoucs = () => { // 拖拽完后高亮当前组件
     editorDataUtils.clearAllFocusBlock()
     editorData.value.blocks[editorData.value.blocks.length - 1].focus = true

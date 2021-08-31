@@ -38,6 +38,11 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
     })
     return lines
   }
+  const getValidVal = (val, min, max) => {
+    if (val > max) val = max
+    if (val < min) val = min
+    return val
+  }
   const onDocumentMousedown = (e) => {
     // 移动所有选中元素
     moveState = {
@@ -60,6 +65,8 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
 
     let { clientX, clientY } = e
     const { startX, startY, startTop, startLeft} = moveState
+    const shiftLinePos = []
+
     const offsetTop = startY - startTop // 容器到页面顶部的距离
     const offsetLeft = startX - startLeft // 容器到页面左边的距离
 
@@ -86,6 +93,14 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
     } else {
       helpLine.y = null 
     }
+    // 禁止超出边界，但是没有考虑选中多个物体的情况
+    const maxX = offsetLeft + editorData.value.container.width - lastFocusBlock.value.width
+    const minX = offsetLeft
+    const maxY = offsetTop + editorData.value.container.height - lastFocusBlock.value.height
+    const minY = offsetTop
+    clientX = getValidVal(clientX, minX, maxX)
+    clientY = getValidVal(clientY, minY, maxY)
+
     const deltaX = clientX - startX
     const deltaY = clientY - startY
 

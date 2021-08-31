@@ -4,10 +4,9 @@ export default defineComponent({
         comp: { type: Object }
     },
     setup(props) {
-        const { comp } = props;
         return () => <div class="preview-comp">
-            <div class="preview-comp__name">{comp.name}：</div>
-            {comp.preview()}
+            <div class="preview-comp__name">{props.comp.name}：</div>
+            {props.comp.preview()}
         </div>
     }
 })

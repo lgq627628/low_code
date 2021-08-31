@@ -1,3 +1,5 @@
+$space: -4px;
+$halfLen: 3px;
 .editor {
     display: flex;
     position: relative;
@@ -85,6 +87,7 @@
 .render-comp {
     position: absolute;
     // transform: translate(-50%, -50%); // 投机取巧，试的拖拽后居中
+    user-select: none;
     &::after {
         content: '';
         position: absolute;
@@ -95,5 +98,63 @@
     }
     &--focus {
         outline: 2px dashed red;
+    }
+    .resize-wrap {
+        position: absolute;
+        top: $space;
+        left: $space;
+        bottom: $space;
+        right: $space;
+        outline: 1px dashed blue;
+    }
+    .square {
+        position: absolute;
+        width: 2 * $halfLen;
+        height: 2 * $halfLen;
+        background: blue;
+    }
+    .resize-wrap-top-mid {
+        top: -$halfLen;
+        left: 50%;
+        transform: translateX(-50%);
+        cursor: ns-resize;
+    }
+    .resize-wrap-bottom-mid {
+        bottom: -$halfLen;
+        left: 50%;
+        transform: translateX(-50%);
+        cursor: ns-resize;
+    }
+    .resize-wrap-left-mid {
+        left: -$halfLen;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: ew-resize;
+    }
+    .resize-wrap-right-mid {
+        right: -$halfLen;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: ew-resize;
+    }
+    .resize-wrap-left-top {
+        top: -$halfLen;
+        left: -$halfLen;
+        cursor: nwse-resize;
+    }
+    .resize-wrap-left-bottom {
+        left: -$halfLen;
+        bottom: -$halfLen;
+        cursor: nesw-resize;
+    }
+    .resize-wrap-right-top {
+        right: -$halfLen;
+        top: -$halfLen;
+        cursor: nesw-resize;
+    }
+    .resize-wrap-right-bottom {
+        right: -$halfLen;
+        bottom: -$halfLen;
+        cursor: nwse-resize;
     }
 }

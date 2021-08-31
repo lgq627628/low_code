@@ -1,4 +1,5 @@
 import { computed, defineComponent, onMounted, ref } from 'vue'
+import ResizeWrap from './resize-wrap'
 import registerConfig from './register'
 export default defineComponent({
     props: {
@@ -11,6 +12,10 @@ export default defineComponent({
         const style = computed(() => ({
             top: `${props.block.top}px`,
             left: `${props.block.left}px`
+        }))
+        const blockStyle = computed(() => ({
+            width: `${props.block.width || ''}px`,
+            height: `${props.block.height || ''}px`
         }))
 
         const renderCompRef = ref(null)
@@ -25,7 +30,8 @@ export default defineComponent({
             props.block.height = offsetHeight
         })
         return () => <div class="render-comp" ref={renderCompRef} style={style.value}>
-            <RenderComp></RenderComp>
+            <RenderComp style={blockStyle.value}></RenderComp>
+            { props.block.focus ? <ResizeWrap block={props.block}></ResizeWrap> : '' }
         </div>
     }
 })
