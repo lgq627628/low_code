@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue'
 import Editor from './components/Editor/Editor.jsx'
-import data from './data.json'
+import data from './data-empty.json'
 export default defineComponent({
   name: 'App',
   components: {

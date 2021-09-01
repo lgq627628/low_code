@@ -11,7 +11,8 @@ export default defineComponent({
         const RenderComp = comp.render()
         const style = computed(() => ({
             top: `${props.block.top}px`,
-            left: `${props.block.left}px`
+            left: `${props.block.left}px`,
+            zIndex: `${props.block.zIndex}`
         }))
         const blockStyle = computed(() => ({
             width: `${props.block.width || ''}px`,

@@ -1,5 +1,6 @@
 import deepcopy from 'deepcopy'
 import { onUnmounted } from 'vue'
+import { ElMessage } from "element-plus"
 import events from './events.js'
 export function useOperate(editorData, editorDataUtils, focusData) {
     const state = {
@@ -115,7 +116,93 @@ export function useOperate(editorData, editorDataUtils, focusData) {
         }
 
     })
-
+    register({
+        name: 'placeTop',
+        pushQueue: true,
+        init() {},
+        exec() {
+            if (!focusData.value.focusBlocks.length) return // 当前无聚焦元素则操作无效
+            const before = deepcopy(editorData.value.blocks)
+            const after = deepcopy(editorData.value.blocks)
+            const maxZIndex = after.reduce((prev, cur) => Math.max(prev, cur.zIndex || 0), -Infinity)
+            after.forEach(block => {
+                if (block.focus) block.zIndex = maxZIndex + 1
+            })
+            return {
+                redo() {
+                    editorDataUtils.updateBlocks(after)
+                },
+                undo() {
+                    editorDataUtils.updateBlocks(before)
+                }
+            }
+        }
+    })
+    register({
+        name: 'placeBottom',
+        pushQueue: true,
+        init() {},
+        exec() {
+            if (!focusData.value.focusBlocks.length) return // 当前无聚焦元素则操作无效
+            const before = deepcopy(editorData.value.blocks)
+            const after = deepcopy(editorData.value.blocks)
+            const minZIndex = after.reduce((prev, cur) => Math.min(prev || 0, cur.zIndex || 0), Infinity)
+            after.forEach(block => {
+                if (block.focus) {
+                    block.zIndex = Math.max(minZIndex, 0) // zIndex 不能小于 0，否则就在画布下面了，选中不了
+                } else {
+                    block.zIndex = (block.zIndex || 0) + 1 // 如果点击多次置底，视觉上可能会无效，因为大家都是一样的值，所以置底的同时让其他元素层级上升
+                }
+            })
+            return {
+                redo() {
+                    editorDataUtils.updateBlocks(after)
+                },
+                undo() {
+                    editorDataUtils.updateBlocks(before)
+                }
+            }
+        }
+    })
+    register({
+        name: 'playback',
+        init() {},
+        exec() {
+            return {
+                redo() {
+                    ElMessage.success('开始回放')
+                    state.queue.forEach((q, i) => {
+                        setTimeout(() => {
+                            q && q.redo && q.redo()
+                            if (i === state.queue.length - 1) {
+                                ElMessage.success('回放完毕')
+                                state.point = state.queue.length - 1
+                            }
+                        }, i * 1000);
+                    })
+                    
+                }
+            }
+        }
+    })
+    register({
+        name: 'clear',
+        pushQueue: true,
+        init() {},
+        exec() {
+            if (!editorData.value.blocks) return
+            const before = deepcopy(editorData.value.blocks)
+            const after = []
+            return {
+                redo() {
+                    editorDataUtils.updateBlocks(after)
+                },
+                undo() {
+                    editorDataUtils.updateBlocks(before)
+                }
+            }
+        }
+    })
     const addKeyboardEvent = () => {
         const keyMap = {
             '90': 'z'
@@ -145,7 +232,6 @@ export function useOperate(editorData, editorDataUtils, focusData) {
     onUnmounted(() => {
         state.destoryList.forEach(fn => fn && fn())
     })
-    window.xxx = state
     return {
         commandMap: state.commandMap
     }

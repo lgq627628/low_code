@@ -8,8 +8,13 @@ import events from "./events"
  */
 export function useDrag(mainRef, editorData, editorDataUtils) {
     let curComp = null
+    let state
 
     const ondragstart = (e, comp) => {
+        state = {
+            startX: mainRef.value.getBoundingClientRect().left,
+            startY: mainRef.value.getBoundingClientRect().top
+        }
         curComp = comp
         // e.dataTransfer.setData('curComp', JSON.stringify(comp)) 为什么不用这样存呢，因为 setData 里面放的是字符串，而我们有函数会被忽略掉
         mainRef.value.addEventListener('dragenter', ondragenter)
@@ -31,10 +36,10 @@ export function useDrag(mainRef, editorData, editorDataUtils) {
         e.preventDefault()
     }
     const ondrop = e => {
-        const { offsetX, offsetY } = e
+        const { clientX, clientY } = e
         const block = {
-            top: offsetY,
-            left: offsetX,
+            top: clientY - state.startY,
+            left: clientX - state.startX,
             key: curComp.key,
             needCenterAfterDrag: true // 拖拽后居中
         }

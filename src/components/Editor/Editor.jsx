@@ -64,10 +64,21 @@ export default defineComponent({
     }, {
       label: '删除',
       handle: () => commandMap.delete()
+    }, {
+      label: '置顶',
+      handle: () => commandMap.placeTop()
+    }, {
+      label: '置底',
+      handle: () => commandMap.placeBottom()
+    }, {
+      label: '回放',
+      handle: () => commandMap.playback()
+    }, {
+      label: '清空',
+      handle: () => commandMap.clear()
     }]
     const { commandMap } = useOperate(editorData, editorDataUtils, focusData)
 
-    window.qqq = editorData
     return () => (
       <div class="editor">
         <div class="editor__left">

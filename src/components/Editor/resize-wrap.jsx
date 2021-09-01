@@ -1,4 +1,5 @@
 import { defineComponent } from 'vue';
+import events from './events';
 
 export default defineComponent({
     props: {
@@ -9,6 +10,7 @@ export default defineComponent({
         const onMousedown = (e, direction) => {
             e.stopPropagation()
             state = {
+                isMoving: false,
                 startX: e.clientX,
                 startY: e.clientY,
                 top: props.block.top,
@@ -21,6 +23,10 @@ export default defineComponent({
             document.addEventListener('mouseup', onMouseup)
         }
         const onMousemove = e => {
+            if (!state.isMoving) {
+                state.isMoving = true
+                events.emit('dragstart')
+            }
             const { clientX, clientY } = e
             let deltaX = clientX - state.startX
             let deltaY = clientY - state.startY
@@ -32,6 +38,9 @@ export default defineComponent({
             }
         }
         const onMouseup = e => {
+            if (state.isMoving) {
+                events.emit('dragend')
+            }
             document.removeEventListener('mousemove', onMousemove)
             document.removeEventListener('mouseup', onMouseup)
         }
