@@ -15,5 +15,9 @@
         "top": 300,
         "left": 300,
         "key": "ElInput"
+    }, {
+        "top": 200,
+        "left": 400,
+        "key": "CustomText"
     }]
 }

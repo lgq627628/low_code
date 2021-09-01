@@ -32,5 +32,11 @@ registerConfig.register({
     preview: () => <ElInput>预览输入框</ElInput>,
     render: () => <ElInput>渲染输入框</ElInput>
 })
+registerConfig.register({
+    key: 'CustomText',
+    name: '文本',
+    preview: () => <CustomText>预览文本</CustomText>,
+    render: () => <CustomText>渲染文本</CustomText>
+})
 
 export default registerConfig
