@@ -1,6 +1,7 @@
 import { computed, defineComponent, ref } from 'vue'
 import RenderComp from './render-comp.jsx'
 import PreviewComp from './preview-comp.jsx'
+import PropsPanel from './props-panel.jsx'
 import registerConfig from './register.jsx'
 import { useDrag } from './useDrag.js'
 import { useFocus } from './useFocus.js'
@@ -79,6 +80,7 @@ export default defineComponent({
     }]
     const { commandMap } = useOperate(editorData, editorDataUtils, focusData)
 
+    const activeTab = ref('props')
     return () => (
       <div class="editor">
         <div class="editor__left">
@@ -108,7 +110,19 @@ export default defineComponent({
             </div>
           </div>
         </div>
-        <div class="editor__right">》</div>
+        <div class="editor__right">
+          <ElTabs v-model={activeTab}>
+            <ElTabPane label="属性" name="props">
+              <PropsPanel block={lastFocusBlock.value}></PropsPanel>
+            </ElTabPane>
+            <ElTabPane label="事件" name="events">
+              <ElButton>点击事件</ElButton>
+            </ElTabPane>
+            <ElTabPane label="动画" name="animates">
+              <ElButton>fade效果</ElButton>
+            </ElTabPane>
+          </ElTabs>
+        </div>
       </div>
     )
   }

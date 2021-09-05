@@ -1,4 +1,9 @@
 .custom-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 40px;
     font-size: 26px;
     font-weight: bold;
     color: red;

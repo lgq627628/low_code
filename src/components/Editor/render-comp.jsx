@@ -14,9 +14,13 @@ export default defineComponent({
             left: `${props.block.left}px`,
             zIndex: `${props.block.zIndex}`
         }))
+        console.log(props.block.style.fontSize)
         const blockStyle = computed(() => ({
-            width: `${props.block.width || ''}px`,
-            height: `${props.block.height || ''}px`
+            width: `${props.block.style.width || ''}px`,
+            height: `${props.block.style.height || ''}px`,
+            fontSize: `${props.block.style.fontSize || 20}px`,
+            fontWeight: `${props.block.style.fontWeight || 500}`,
+            color: `${props.block.style.color || '#000'}`
         }))
 
         const renderCompRef = ref(null)
@@ -29,6 +33,9 @@ export default defineComponent({
             }
             props.block.width = offsetWidth // 方便后面计算辅助线用
             props.block.height = offsetHeight
+            props.block.style.width = offsetWidth
+            props.block.style.height = offsetHeight
+
         })
         return () => <div class="render-comp" ref={renderCompRef} style={style.value}>
             <RenderComp style={blockStyle.value}></RenderComp>
