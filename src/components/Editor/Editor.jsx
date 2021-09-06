@@ -80,7 +80,8 @@ export default defineComponent({
     }]
     const { commandMap } = useOperate(editorData, editorDataUtils, focusData)
 
-    const activeTab = ref('props')
+    let activeTab = ref('props')
+    const EmptyText = <div class="empty-text">请先选中对应的组件</div>
     return () => (
       <div class="editor">
         <div class="editor__left">
@@ -111,15 +112,15 @@ export default defineComponent({
           </div>
         </div>
         <div class="editor__right">
-          <ElTabs v-model={activeTab}>
+          <ElTabs v-model={activeTab.value}>
             <ElTabPane label="属性" name="props">
-              <PropsPanel block={lastFocusBlock.value}></PropsPanel>
+              { lastFocusBlock.value ? <PropsPanel block={lastFocusBlock.value}></PropsPanel> : EmptyText }
             </ElTabPane>
             <ElTabPane label="事件" name="events">
-              <ElButton>点击事件</ElButton>
+              { lastFocusBlock.value ? <ElButton>点击事件</ElButton> : EmptyText }
             </ElTabPane>
             <ElTabPane label="动画" name="animates">
-              <ElButton>fade效果</ElButton>
+              { lastFocusBlock.value ? <ElButton>fade效果</ElButton> : EmptyText }
             </ElTabPane>
           </ElTabs>
         </div>

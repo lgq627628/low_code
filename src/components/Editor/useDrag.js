@@ -1,4 +1,5 @@
 import events from "./events"
+import registerConfig from './register'
 
 /**
  * @description: 从左侧物料区拖拽到右侧画布区
@@ -41,6 +42,8 @@ export function useDrag(mainRef, editorData, editorDataUtils) {
             top: clientY - state.startY,
             left: clientX - state.startX,
             key: curComp.key,
+            props: registerConfig.componentMap[curComp.key].props,
+            style: {},
             needCenterAfterDrag: true // 拖拽后居中
         }
         const blocks = editorData.value.blocks

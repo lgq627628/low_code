@@ -65,8 +65,14 @@ export function useMove(focusData, lastFocusBlock, editorData) { // 拖拽的时
 
     let { clientX, clientY } = e
     const { startX, startY, startTop, startLeft} = moveState
-    const shiftLinePos = []
 
+    if (e.shiftKey) {
+      if (Math.abs(clientX - startX) > Math.abs(clientY - startY)) {
+        clientY = startY
+      } else {
+        clientX = startX
+      }
+    }
     const offsetTop = startY - startTop // 容器到页面顶部的距离
     const offsetLeft = startX - startLeft // 容器到页面左边的距离
 

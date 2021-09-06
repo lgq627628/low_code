@@ -11,7 +11,9 @@ export function useFocus(editorData, editorDataUtils, beforeMoveCb) {
   const lastFocusBlock = computed(() => editorData.value.blocks[lastFocusIdx.value])
   const makeLastBlockFoucs = () => { // 拖拽完后高亮当前组件
     editorDataUtils.clearAllFocusBlock()
-    editorData.value.blocks[editorData.value.blocks.length - 1].focus = true
+    const lastIdx = editorData.value.blocks.length - 1
+    editorData.value.blocks[lastIdx].focus = true
+    lastFocusIdx.value = lastIdx
   }
   const focusData = computed(() => {
     const focusBlocks = [];

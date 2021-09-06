@@ -9,6 +9,11 @@
         "key": "ElButton",
         "style": {}
     }, {
+        "top": 200,
+        "left": 200,
+        "key": "ElTag",
+        "style": {}
+    }, {
         "top": 300,
         "left": 300,
         "key": "ElInput",
@@ -17,6 +22,12 @@
         "top": 150,
         "left": 500,
         "key": "CustomText",
-        "style": {}
+        "style": {
+            "width": 200,
+            "height": 50,
+            "fontSize": 40,
+            "fontWeight": 600,
+            "color": "red"
+        }
     }]
 }

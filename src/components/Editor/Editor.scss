@@ -30,6 +30,9 @@ $halfLen: 3px;
         padding: 10px;
         border-left: 1px solid green;
         box-sizing: border-box;
+        .empty-text {
+            color: #bbb;
+        }
     }
     &__wrap {
         display: flex;
