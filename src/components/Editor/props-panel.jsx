@@ -34,10 +34,10 @@ export default defineComponent({
             {
                 props.block ? <ElForm>
                     <ElFormItem label='宽度'>
-                        <ElInput></ElInput>
+                        <ElInput v-model={props.block.width}></ElInput>
                     </ElFormItem>
                     <ElFormItem label='高度'>
-                        <ElInput></ElInput>
+                        <ElInput v-model={props.block.height}></ElInput>
                     </ElFormItem>
                     {
                         props.block.key ? Object.entries(registerConfig.componentMap[props.block.key].props).map(([propName, propCfg]) => {

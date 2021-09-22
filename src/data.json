@@ -7,16 +7,13 @@
         "top": 100,
         "left": 100,
         "key": "ElButton",
+        "props": {},
         "style": {}
     }, {
         "top": 300,
         "left": 300,
         "key": "ElInput",
-        "style": {}
-    }, {
-        "top": 150,
-        "left": 500,
-        "key": "CustomText",
+        "props": {},
         "style": {}
     }]
 }

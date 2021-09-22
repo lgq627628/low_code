@@ -13,18 +13,18 @@ export default defineComponent({
             return prev
         }, {})
         // const RenderComp = comp.render(props.block.props)
-        const style = computed(() => ({
+        const wrapStyle = computed(() => ({
             top: `${props.block.top}px`,
             left: `${props.block.left}px`,
             zIndex: `${props.block.zIndex}`
         }))
-        const blockStyle = computed(() => ({
-            width: `${props.block.style.width || ''}px`,
-            height: `${props.block.style.height || ''}px`
-            // fontSize: `${props.block.style.fontSize || 20}px`,
-            // fontWeight: `${props.block.style.fontWeight || 500}`,
-            // color: `${props.block.style.color || '#000'}`
-        }))
+        // const blockStyle = computed(() => ({
+        //     width: `${props.block.style.width || ''}px`,
+        //     height: `${props.block.style.height || ''}px`
+        //     // fontSize: `${props.block.style.fontSize || 20}px`,
+        //     // fontWeight: `${props.block.style.fontWeight || 500}`,
+        //     // color: `${props.block.style.color || '#000'}`
+        // }))
 
         const renderCompWrapRef = ref(null)
         const renderCompRef = ref(null)
@@ -37,14 +37,15 @@ export default defineComponent({
             }
             props.block.width = offsetWidth // 方便后面计算辅助线用
             props.block.height = offsetHeight
+
             // props.block.style = Object.assign(props.block.style, {
             //     width: offsetWidth,
             //     height: offsetHeight,
             // })
         })
-        return () => <div class="render-comp" ref={renderCompWrapRef} style={style.value}>
+        return () => <div class="render-comp" ref={renderCompWrapRef} style={wrapStyle.value}>
             {/* <RenderComp style={blockStyle.value} ref={renderCompRef}></RenderComp> */}
-            { comp.render(props.block.props) }
+            { comp.render(props.block) }
             { props.block.focus ? <ResizeWrap block={props.block}></ResizeWrap> : '' }
         </div>
     }
