@@ -28,6 +28,7 @@ export function useOperate(editorData, editorDataUtils, focusData) {
             state.queue = queue.slice(0, point + 1) // 撤销过程中再添加的话需要舍弃栈指针后面的元素
             state.queue.push({ redo, undo })
             state.point++
+            console.log('111')
         }
     }
 

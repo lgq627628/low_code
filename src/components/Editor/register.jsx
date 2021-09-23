@@ -19,7 +19,7 @@ registerConfig.register({
     key: 'ElTag',
     name: '标签',
     preview: () => <ElTag>预览标签</ElTag>,
-    render: (block) => <ElTag color={block.props.color} size={block.props.size || 'medium'}>{ block.props.text || '渲染标签'}</ElTag>,
+    render: (block) => <ElTag color={block.props.color} size={block.props.size || 'medium'} style={`width: ${block.width}px; height: ${block.height}px;`}>{ block.props.text || '渲染标签'}</ElTag>,
     props: {
         text: createInputProp('显示文本'),
         color: createColorProp('背景颜色'),
@@ -55,7 +55,7 @@ registerConfig.register({
     key: 'CustomText',
     name: '文本',
     preview: () => <CustomText>预览文本</CustomText>,
-    render: (block) => <CustomText text={block.props.text || '自定义文本'} style={`fontSize: ${block.props.size}px; width: ${block.width}px; height: ${block.height}px; `}></CustomText>,
+    render: (block) => <CustomText text={block.props.text || '自定义文本'} style={`fontSize: ${block.props.size}px; width: ${block.width}px; height: ${block.height}px;`}></CustomText>,
     props: {
         text: createInputProp('显示文本'),
         size: createInputProp('字体大小')
