@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import App from './PC/App.vue'
-import H5 from './H5/App.vue'
+import H5 from './H5/App.jsx'
 
 const routes = [
     { path: '/h5', component: H5 },

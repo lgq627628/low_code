@@ -1,0 +1,23 @@
+{
+    "name": "h5-banner",
+    "description": "banner 组件",
+    "snapshot": "",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "href": {
+                "title": "图片地址",
+                "type": "string",
+                "format": "image"
+            },
+            "src": {
+                "title": "跳转链接",
+                "type": "string",
+                "format": "url"
+            }
+        },
+        "required": [
+            "src"
+        ]
+    }
+}

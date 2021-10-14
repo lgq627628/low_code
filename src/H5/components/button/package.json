@@ -1,0 +1,20 @@
+{
+    "name": "h5-button",
+    "description": "button 组件",
+    "snapshot": "",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "text": {
+                "title": "按钮文案",
+                "type": "string"
+            },
+            "action": {
+                "title": "提交接口",
+                "type": "string",
+                "format": "url"
+            }
+        },
+        "required": ["text"]
+    }
+}
